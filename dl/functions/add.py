@@ -2,8 +2,8 @@ import numpy as np
 from dl.graph import Node
 
 
-# refactor to module
-def sum(A, B):
+# incomplete
+def add(A, B):
     # Compute output of module.
     output = np.add(A, B)
 

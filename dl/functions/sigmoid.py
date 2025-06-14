@@ -2,12 +2,11 @@ import numpy as np
 from dl.graph import Node
 
 
-# refactor to module
 def sigmoid(X):
     # Compute output of module.
     output = 1 / (1 + np.exp(-X))
 
-    # Create node in computation graph.
+    # Create and connect node in computation graph.
     output.node = Node()
 
     input_nodes = []

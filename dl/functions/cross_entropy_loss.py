@@ -1,17 +1,15 @@
 import numpy as np
-from .softmax import softmax
+from dl.functions.softmax import softmax
 from dl.graph import Node
 
 
-# refactor to module
 def cross_entropy_loss(X, y):
+
     # Compute output of module.
-    probs = softmax(
-        X
-    )  # computed in two steps, because probs is an intermediate value needed for the backward pass.
+    probs = softmax(X)
     output = np.average(-np.log(probs[np.arange(y.shape[0]), y]))
 
-    # Create node in computation graph.
+    # Create and connect node in computation graph.
     output.node = Node()
 
     input_nodes = []
@@ -31,9 +29,9 @@ def cross_entropy_loss(X, y):
 def cross_entropy_loss_backward(params, upstream=None):
     # dX
     params["probs"][np.arange(params["y"].shape[0]), params["y"]] -= 1
-    params["probs"] /= params["y"].shape[0]
+    params["probs"] /= params["y"].shape[0]  # Divide by N
 
     if upstream is None:
         return [params["probs"]]
     else:
-        return [params["probs"] * upstream]
+        return [params["probs"] * upstream]  # upstream is dz/dL which is a scalar

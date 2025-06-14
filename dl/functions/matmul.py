@@ -2,12 +2,11 @@ import numpy as np
 from dl.graph import Node
 
 
-# refactor to module
 def matmul(A, B):
-    # Compute output of module.
+    # Compute output of function.
     output = np.matmul(A, B)
 
-    # Create node in computation graph.
+    # Create and connect node in computation graph.
     output.node = Node()
 
     input_nodes = []
@@ -26,7 +25,6 @@ def matmul(A, B):
     return output
 
 
-# Backward definition.
 def matmul_backward(params, upstream=None):
     grads = []
 

@@ -10,17 +10,15 @@ class Variable(np.ndarray):
         # We first cast to be our class type
         obj = np.asarray(input_array).view(cls)
 
-        # add the new attribute to the created instance
+        # Add the Node attribute to the created instance
         obj.node = Node(keep_grad=keep_grad)
 
         # Finally, we must return the newly created object:
         return obj
 
     def __array_finalize__(self, obj):
-        # see InfoArray.__array_finalize__ for comments
         if obj is None:
             return
-        self.info = getattr(obj, "info", None)
 
     # Alias, equivalent to self.node.backward().
     def backward(self):
