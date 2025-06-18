@@ -3,9 +3,9 @@ from dl import Parameter
 
 class Module:
     def __init__(self):
-        self._child_modules = {}
-        self._params = {}
-        self._hyper_parameters = {}
+        object.__setattr__(self, "_child_modules", {})
+        object.__setattr__(self, "_params", {})
+        object.__setattr__(self, "_hyper_parameters", {})
 
     def __setattr__(self, name, value):
         if isinstance(value, Parameter):
@@ -13,6 +13,9 @@ class Module:
 
         elif isinstance(value, Module):
             self._child_modules[name] = value
+
+        else:
+            self._hyper_parameters[name] = value
 
         object.__setattr__(self, name, value)
 

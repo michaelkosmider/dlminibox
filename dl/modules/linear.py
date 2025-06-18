@@ -2,10 +2,10 @@ import numpy as np
 from dl.graph import Node
 from dl import Parameter
 from dl import Module
+from dl.functions import matmul, add
 
 
 class Linear(Module):
-    # Module initialization.
     def __init__(self, input_size, output_size, param_init="xavier"):
         super().__init__()
 
@@ -28,46 +28,7 @@ class Linear(Module):
             )
 
     def forward(self, X):
-        # Compute output of module.
-        output = X @ self.W + self.b
+        X = matmul(X, self.W)
+        X = add(X, self.b)
 
-        # Create node in computation graph.
-        output.node = Node()
-
-        input_nodes = []
-        backward_fn_params = {}
-
-        if X.node.propagate_grad or X.node.keep_grad:
-            input_nodes.append(X.node)
-            backward_fn_params["W"] = self.W
-
-        if self.W.node.keep_grad:
-            input_nodes.append(self.W.node)
-            backward_fn_params["X"] = X
-
-        if self.b.node.keep_grad:
-            input_nodes.append(self.b.node)
-            backward_fn_params["db"] = True
-
-        output.node.connect(input_nodes, Linear.backward, backward_fn_params)
-
-        return output
-
-    # Backward definition.
-    @staticmethod
-    def backward(params, upstream=None):
-        grads = []
-
-        # dX
-        if "W" in params:
-            grads.append(upstream @ params["W"].T)
-
-        # dW
-        if "X" in params:
-            grads.append(params["X"].T @ upstream)
-
-        # db
-        if "db" in params:
-            grads.append(np.sum(upstream, axis=0))
-
-        return grads
+        return X
