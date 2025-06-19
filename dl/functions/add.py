@@ -1,31 +1,30 @@
 import numpy as np
-from dl.graph import Node
+from dl.graph import Variable
 
 
 def add(A, B):
     # Compute output of module.
-    output = np.add(A, B)
+    Y_data = np.add(A.data, B.data)
+    Y = Variable(Y_data)
 
     # Create and connect node in computation graph.
-    output.node = Node()
-
     input_nodes = []
     backward_fn_params = {}
 
     if A.node.propagate_grad or A.node.keep_grad:
-        backward_fn_params["A_shape"] = A.shape
+        backward_fn_params["A_shape"] = A.data.shape
         input_nodes.append(A.node)
 
     if B.node.propagate_grad or B.node.keep_grad:
-        backward_fn_params["B_shape"] = B.shape
+        backward_fn_params["B_shape"] = B.data.shape
         input_nodes.append(B.node)
 
     if len(input_nodes) > 0:
-        backward_fn_params["Y_shape"] = output.shape
+        backward_fn_params["Y_shape"] = Y.data.shape
 
-    output.node.connect(input_nodes, add_backward, backward_fn_params)
+    Y.node.connect(input_nodes, add_backward, backward_fn_params)
 
-    return output
+    return Y
 
 
 # Backward definition.
@@ -49,7 +48,6 @@ def add_backward(params, upstream):
 
 
 def deduce_axis(in_shape, out_shape):
-
     # Pad input shape with singleton dimensions.
     padding_needed = len(out_shape) - len(in_shape)
     in_shape = (1,) * padding_needed + in_shape

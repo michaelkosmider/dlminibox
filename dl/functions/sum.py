@@ -1,25 +1,24 @@
 import numpy as np
-from dl.graph import Node
+from dl.graph import Variable
 
 
 def sum(X, axis=None):
     # Compute output of module.
-    output = np.sum(X, axis=axis)
+    Y_data = np.sum(X.data, axis=axis)
+    Y = Variable(Y_data)
 
-    # Create and connect node in computation graph.
-    output.node = Node()
-
+    # Connect node in computation graph.
     input_nodes = []
     backward_fn_params = {}
 
     if X.node.propagate_grad or X.node.keep_grad:
         input_nodes.append(X.node)
         backward_fn_params["axis"] = axis
-        backward_fn_params["input_shape"] = X.shape
+        backward_fn_params["input_shape"] = X.data.shape
 
-    output.node.connect(input_nodes, sum_backward, backward_fn_params)
+    Y.node.connect(input_nodes, sum_backward, backward_fn_params)
 
-    return output
+    return Y
 
 
 # Backward definition.

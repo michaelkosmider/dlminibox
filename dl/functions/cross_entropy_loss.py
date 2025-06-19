@@ -1,28 +1,26 @@
 import numpy as np
 from dl.functions.softmax import softmax
-from dl.graph import Node
+from dl.graph import Variable
 
 
 def cross_entropy_loss(X, y):
-
     # Compute output of module.
-    probs = softmax(X)
-    output = np.average(-np.log(probs[np.arange(y.shape[0]), y]))
+    probs = softmax(X.data)
+    Y_data = np.average(-np.log(probs[np.arange(y.data.shape[0]), y.data]))
+    Y = Variable(Y_data)
 
-    # Create and connect node in computation graph.
-    output.node = Node()
-
+    # Connect node in computation graph.
     input_nodes = []
     backward_fn_params = {}
 
     if X.node.keep_grad or X.node.propagate_grad:
         input_nodes.append(X.node)
-        backward_fn_params["y"] = y
+        backward_fn_params["y"] = y.data
         backward_fn_params["probs"] = probs
 
-    output.node.connect(input_nodes, cross_entropy_loss_backward, backward_fn_params)
+    Y.node.connect(input_nodes, cross_entropy_loss_backward, backward_fn_params)
 
-    return output
+    return Y
 
 
 # Backward definition.

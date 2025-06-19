@@ -1,27 +1,25 @@
 import numpy as np
-from dl.graph import Node
+from dl.graph import Variable
 
 
 def relu(X):
-
     # Compute output of module.
-    output = np.maximum(0, X)
+    Y_data = np.maximum(0, X.data)
+    Y = Variable(Y_data)
 
-    # Create and connect node in computation graph.
-    output.node = Node()
-
+    # Connect node in computation graph.
     input_nodes = []
     backward_fn_params = {}
 
     if X.node.propagate_grad or X.node.keep_grad:
         input_nodes.append(X.node)
-        backward_fn_params["output"] = output
+        backward_fn_params["Y"] = Y.data
 
-    output.node.connect(input_nodes, relu_backward, backward_fn_params)
+    Y.node.connect(input_nodes, relu_backward, backward_fn_params)
 
-    return output
+    return Y
 
 
 def relu_backward(params, upstream):
-    dX = [upstream * (1 * (params["output"] > 0))]
-    return dX
+    G_XY = upstream * (1 * (params["Y"] > 0))
+    return [G_XY]
