@@ -1,30 +1,29 @@
 import numpy as np
-from dl.graph import Node
+from dl.graph import Variable
 
 
 def sigmoid(X):
     # Compute output of module.
-    output = 1 / (1 + np.exp(-X))
+    Y_data = 1 / (1 + np.exp(-X))
+    Y = Variable(Y_data)
 
-    # Create and connect node in computation graph.
-    output.node = Node()
-
+    # Connect node in computation graph.
     input_nodes = []
     backward_fn_params = {}
 
     if X.node.propagate_grad or X.node.keep_grad:
         input_nodes.append(X.node)
-        backward_fn_params["output"] = output
+        backward_fn_params["output"] = Y.data
 
-    output.node.connect(input_nodes, sigmoid_backward, backward_fn_params)
+    Y.node.connect(input_nodes, sigmoid_backward, backward_fn_params)
 
-    return output
+    return Y
 
 
 # Backward definition.
-def sigmoid_backward(params, upstream):
+def sigmoid_backward(params, dY):
     # dX
-    return [upstream * (params["output"] * (1 - params["output"]))]
+    return [dY * (params["output"] * (1 - params["output"]))]
 
 
 """

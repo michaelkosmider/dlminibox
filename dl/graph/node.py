@@ -1,16 +1,12 @@
 class Node:
     def __init__(self, propagate_grad=False, keep_grad=False):
-
         self.grad = None
         self.keep_grad = keep_grad
         self.propagate_grad = propagate_grad
 
     def propagate(self):
-
         # Obtain a list of input gradients, corresponding to the list of inputs.
-        input_grads = self.backward_fn(
-            params=self.backward_fn_params, upstream=self.grad
-        )
+        input_grads = self.backward_fn(params=self.backward_fn_params, dY=self.grad)
 
         # Accumulate grads in input_nodes.
         for input, input_grad in zip(self.input_nodes, input_grads):
@@ -42,7 +38,6 @@ class Node:
 
     # The calling node must have backward_fn that accepts None as upstream. The Variable that this node represents must be a scalar.
     def backward(self):
-
         self.ordering = []
         toposort_nodes(self, self.ordering)
 

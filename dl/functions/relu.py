@@ -20,6 +20,6 @@ def relu(X):
     return Y
 
 
-def relu_backward(params, upstream):
-    G_XY = upstream * (1 * (params["Y"] > 0))
+def relu_backward(params, dY):
+    G_XY = dY * (1 * (params["Y"] > 0))
     return [G_XY]

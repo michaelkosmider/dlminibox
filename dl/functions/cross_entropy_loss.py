@@ -24,12 +24,12 @@ def cross_entropy_loss(X, y):
 
 
 # Backward definition.
-def cross_entropy_loss_backward(params, upstream=None):
-    # dX
+def cross_entropy_loss_backward(params, dY=None):
+    # G_XY
     params["probs"][np.arange(params["y"].shape[0]), params["y"]] -= 1
     params["probs"] /= params["y"].shape[0]  # Divide by N
 
-    if upstream is None:
+    if dY is None:
         return [params["probs"]]
     else:
-        return [params["probs"] * upstream]  # upstream is dz/dL which is a scalar
+        return [params["probs"] * dY]  # upstream is dz/dL which is a scalar

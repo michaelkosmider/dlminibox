@@ -22,10 +22,10 @@ def sum(X, axis=None):
 
 
 # Backward definition.
-def sum_backward(params, upstream):
+def sum_backward(params, dY):
     # dX
-    if upstream is not None:
-        expanded_upstream = np.expand_dims(upstream, params["axis"])
+    if dY is not None:
+        expanded_upstream = np.expand_dims(dY, params["axis"])
         dX = np.broadcast_to(expanded_upstream, params["input_shape"])
 
     else:

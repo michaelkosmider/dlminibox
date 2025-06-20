@@ -28,19 +28,19 @@ def add(A, B):
 
 
 # Backward definition.
-def add_backward(params, upstream):
+def add_backward(params, dY):
     grads = []
 
     # G_AY
     if "A_shape" in params:
         axis = deduce_axis(params["A_shape"], params["Y_shape"])
-        G_AY = np.sum(upstream, axis=axis, keepdims=True)
+        G_AY = np.sum(dY, axis=axis, keepdims=True)
         G_AY = np.reshape(G_AY, params["A_shape"])  # Remove padding dimensions.
         grads.append(G_AY)
 
     if "B_shape" in params:
         axis = deduce_axis(params["B_shape"], params["Y_shape"])
-        G_BY = np.sum(upstream, axis=axis, keepdims=True)
+        G_BY = np.sum(dY, axis=axis, keepdims=True)
         G_BY = np.reshape(G_BY, params["B_shape"])
         grads.append(G_BY)
 

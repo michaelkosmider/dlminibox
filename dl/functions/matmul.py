@@ -25,15 +25,15 @@ def matmul(A, B):
     return Y
 
 
-def matmul_backward(params, upstream=None):
+def matmul_backward(params, dY=None):
     grads = []
 
     # dA
     if "B" in params:
-        grads.append(upstream @ params["B"].T)
+        grads.append(dY @ params["B"].T)
 
     # dB
     if "A" in params:
-        grads.append(params["A"].T @ upstream)
+        grads.append(params["A"].T @ dY)
 
     return grads

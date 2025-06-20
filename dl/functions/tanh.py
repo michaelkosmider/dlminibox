@@ -3,7 +3,6 @@ from dl.graph import Node
 
 
 def tanh(X):
-
     # Compute output of module.
     exp_2x = np.exp(2 * X)
     output = (exp_2x - 1) / (exp_2x + 1)
@@ -24,6 +23,6 @@ def tanh(X):
 
 
 # Backward definition.
-def tanh_backward(params, upstream):
+def tanh_backward(params, dY):
     # dX
-    return [upstream * ((1 - params["output"] ** 2))]
+    return [dY * (1 - params["output"] ** 2)]

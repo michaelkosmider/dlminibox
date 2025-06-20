@@ -1,6 +1,5 @@
 import numpy as np
 from dl import Variable
-from dl.graph import Node
 
 
 def select(X, *indices):
@@ -26,11 +25,11 @@ def select(X, *indices):
     return Y
 
 
-def select_backward(params, upstream=None):
-    if upstream is None:
-        upstream = 1.0
+def select_backward(params, dY=None):
+    if dY is None:
+        dY = 1.0
 
     grad = np.zeros(params["shape"], dtype=np.float64)
-    np.add.at(grad, params["indices"], upstream)
+    np.add.at(grad, params["indices"], dY)
 
     return [grad]
