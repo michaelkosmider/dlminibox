@@ -1,7 +1,5 @@
 import numpy as np
-from dl.graph import Node
-from dl import Parameter
-from dl import Module
+from dl import Parameter, Module
 from dl.functions import matmul, add
 
 
