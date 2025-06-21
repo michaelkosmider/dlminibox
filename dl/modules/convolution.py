@@ -109,26 +109,34 @@ def convolution_backward(params, dY=None):
         W_flipped_columns = np.reshape(W_flipped, shape=(C_in, C_out * K * K)).T
 
         # Dialate, pad, and reshape upstream gradient dY.
-        dY_dil = pad_and_dilate(dY, padding=K - 1, dilation=stride - 1)
-
         N_batch, _, H_in, W_in = X_shape
+        dY_dil = pad_and_dilate(dY, padding=K - 1, dilation=stride - 1)
+        H_in_span = dY_dil.shape[2] - K + 1
+        W_in_span = dY_dil.shape[3] - K + 1
 
-        # Perform convolution with flipped kernel and modified dY.
-        span_H = dY_dil.shape[2] - K + 1
-        span_W = dY_dil.shape[3] - K + 1
+        # Note: Move this check earlier up to prevent unnecessary computations.
+        if H_in_span <= padding or W_in_span <= padding:
+            grads.append(G_XY)
+        else:
+            # Perform convolution with flipped kernel and modified dY.
+            dY_dil = dY_dil[
+                :, :, padding : padding + H_in + K - 1, padding : padding + W_in + K - 1
+            ]
+            H_deconv_out = dY_dil.shape[2] - K + 1
+            W_deconv_out = dY_dil.shape[3] - K + 1
 
-        dY_dil_rows = im2row(dY_dil, C_out, K, stride=1)
+            dY_dil_rows = im2row(dY_dil, C_out, K, stride=1)
 
-        G_XY_mat = np.matmul(dY_dil_rows, W_flipped_columns)
+            G_XY_mat = np.matmul(dY_dil_rows, W_flipped_columns)
 
-        G_XY_span = np.reshape(G_XY_mat, shape=(N_batch, span_H, span_W, C_in))
-        G_XY_span = np.transpose(G_XY_span, axes=(0, 3, 1, 2))
-        G_XY_span = G_XY_span[:, :, padding : padding + H_in, padding : padding + W_in]
-        _, _, H_out, W_out = G_XY_span.shape
+            G_XY_span = np.reshape(
+                G_XY_mat, shape=(N_batch, H_deconv_out, W_deconv_out, C_in)
+            )
+            G_XY_span = np.transpose(G_XY_span, axes=(0, 3, 1, 2))
 
-        G_XY[:, :, :H_out, :W_out] = G_XY_span
+            G_XY[:, :, :H_deconv_out, :W_deconv_out] = G_XY_span
 
-        grads.append(G_XY)
+            grads.append(G_XY)
 
     return grads
 
