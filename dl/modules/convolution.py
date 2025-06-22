@@ -4,7 +4,7 @@ from numpy.lib.stride_tricks import sliding_window_view
 
 
 class Convolution(Module):
-    def __init__(self, C_out, C_in, K, stride, padding, param_init="He"):
+    def __init__(self, C_in, C_out, K, stride=1, padding=0, param_init="He"):
         super().__init__()
 
         # Store hyper_parameters for print_module() and forward.

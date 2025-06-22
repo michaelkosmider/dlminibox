@@ -12,9 +12,6 @@ class Linear(Module):
         self._hyper_parameters["output_size"] = output_size
         self._hyper_parameters["param_init"] = param_init
 
-        # Bias initialized to 0.
-        self.b = Parameter(np.zeros(output_size), keep_grad=True)
-
         # Weights are initialized using xavier initialization (more types of initialization to be added later).
         if param_init == "xavier":
             xavier_range = np.sqrt(6 / (1 + input_size + output_size))
@@ -24,6 +21,9 @@ class Linear(Module):
                 ),
                 keep_grad=True,
             )
+
+        # Bias initialized to 0.
+        self.b = Parameter(np.zeros(output_size), keep_grad=True)
 
     def forward(self, X):
         X = matmul(X, self.W)
