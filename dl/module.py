@@ -47,8 +47,6 @@ class Module:
 
         return parameter_flatlist
 
-    # Resolve: it is unclear what the printing order is, other than inner modules appearing less indented. Figure this out.
-    # Resolve2: Apparently dicts are ordered
     def print(self, indent=0):
         if len(self._child_modules) == 0:
             print(repr(self))

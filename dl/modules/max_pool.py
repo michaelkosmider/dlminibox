@@ -31,7 +31,7 @@ class MaxPool(Module):
         if X.node.keep_grad or X.node.propagate_grad:
             input_nodes.append(X.node)
 
-            backward_fn_params["X"] = X
+            backward_fn_params["X"] = X.data
             backward_fn_params["K"] = self.K
             backward_fn_params["stride"] = self.stride
 
@@ -45,7 +45,7 @@ def max_pool_backward(params, dY=None):
     K = params["K"]
     stride = params["stride"]
 
-    N, C_in, H, W = X.data.shape
+    N, C_in, H, W = X.shape
     X_windows = sliding_window_view(X, window_shape=(1, K, K), axis=(1, 2, 3))
     X_windows = X_windows[:, :, ::stride, ::stride]
 
