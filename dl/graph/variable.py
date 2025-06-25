@@ -9,6 +9,7 @@ class Variable:
     def backward(self):
         self.node.backward()
 
+    @property
     def grad(self):
         return self.node.grad
 

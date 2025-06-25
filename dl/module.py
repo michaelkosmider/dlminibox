@@ -56,3 +56,13 @@ class Module:
             for name, child_module in self._child_modules.items():
                 print(f"{'    ' * (indent + 1)}{name} : ", end="")
                 child_module.print(indent + 1)
+
+    def enable_grad(self):
+
+        for param in self.parameters():
+            param.node.keep_grad = True
+
+    def disable_grad(self):
+
+        for param in self.parameters():
+            param.node.keep_grad = False

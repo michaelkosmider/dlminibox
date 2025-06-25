@@ -53,6 +53,19 @@ def default_collate(batch):
         return Variable(np.stack([element.data for element in batch]))
 
 
+class ComposeTransforms:
+
+    def __init__(self, transforms):
+        self.transforms = transforms
+
+    def __call__(self, X):
+
+        for t in self.transforms:
+            X = t(X)
+
+        return X
+
+
 def train_val_split(X, y, ratio=0.1, seed=42):
     np.random.seed(seed)
 
