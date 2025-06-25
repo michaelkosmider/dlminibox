@@ -79,3 +79,9 @@ def train_val_split(X, y, ratio=0.1, seed=42):
     X_val, y_val = X[val_idx], y[val_idx]
 
     return X_train, y_train, X_val, y_val
+
+
+def accuracy(features, labels):
+    predictions = np.argmax(features.data, axis=1)
+    targets = labels.data
+    return np.sum(predictions == targets)
