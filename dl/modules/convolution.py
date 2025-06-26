@@ -28,9 +28,7 @@ class Convolution(Module):
         X_padded = pad_and_dilate(X.data, self.padding)
         X_rows = im2row(X_padded, self.C_in, self.K, self.stride)
 
-        W_columns = np.reshape(
-            self.W.data, shape=(self.C_out, self.C_in * self.K * self.K)
-        ).T
+        W_columns = np.reshape(self.W.data, (self.C_out, self.C_in * self.K * self.K)).T
 
         # Perform the matrix multiplication and reshape.
         Y_mat = np.matmul(X_rows, W_columns)
@@ -38,7 +36,7 @@ class Convolution(Module):
         N_batch, _, H_in, W_in = X.data.shape
         H_out = (H_in + 2 * self.padding - self.K) // self.stride + 1
         W_out = (W_in + 2 * self.padding - self.K) // self.stride + 1
-        Y_data = np.reshape(Y_mat, shape=(N_batch, H_out, W_out, self.C_out))
+        Y_data = np.reshape(Y_mat, (N_batch, H_out, W_out, self.C_out))
         Y_data = np.transpose(Y_data, axes=(0, 3, 1, 2))
 
         Y = Variable(Y_data)
@@ -86,11 +84,11 @@ def convolution_backward(params, dY=None):
         # Reshape upstream to match shape of matrix multiplication output (not module output).
         C_out = dY.shape[1]
         dY_columns = np.transpose(dY, axes=(0, 2, 3, 1))
-        dY_columns = np.reshape(dY_columns, shape=(-1, C_out))
+        dY_columns = np.reshape(dY_columns, (-1, C_out))
 
         # Compute G_W
         G_W_rows = np.matmul(X_rows.T, dY_columns).T
-        G_W = np.reshape(G_W_rows, shape=(C_out, C_in, K, K))
+        G_W = np.reshape(G_W_rows, (C_out, C_in, K, K))
 
         grads.append(G_W)
 
@@ -106,7 +104,7 @@ def convolution_backward(params, dY=None):
         # Flip and flatten the kernel.
         C_out, C_in, K, _ = W.shape
         W_flipped = np.transpose(np.flip(W, axis=(-2, -1)), axes=(1, 0, 2, 3))
-        W_flipped_columns = np.reshape(W_flipped, shape=(C_in, C_out * K * K)).T
+        W_flipped_columns = np.reshape(W_flipped, (C_in, C_out * K * K)).T
 
         # Dialate, pad, and reshape upstream gradient dY.
         N_batch, _, H_in, W_in = X_shape
@@ -130,7 +128,7 @@ def convolution_backward(params, dY=None):
             G_XY_mat = np.matmul(dY_dil_rows, W_flipped_columns)
 
             G_XY_span = np.reshape(
-                G_XY_mat, shape=(N_batch, H_deconv_out, W_deconv_out, C_in)
+                G_XY_mat, (N_batch, H_deconv_out, W_deconv_out, C_in)
             )
             G_XY_span = np.transpose(G_XY_span, axes=(0, 3, 1, 2))
 
@@ -143,6 +141,7 @@ def convolution_backward(params, dY=None):
 
 def im2row(X, C_in, K, stride):
     # Convert each image patch to a row.
+
     X_windows = sliding_window_view(
         X, window_shape=(C_in, K, K), axis=(1, 2, 3)
     )  # Shape: (N_batch, 1, H_out, W_out, C_in, K, K)
@@ -150,7 +149,7 @@ def im2row(X, C_in, K, stride):
     X_windows = X_windows[:, ::stride, ::stride]
 
     X_rows = np.reshape(
-        X_windows, shape=(-1, C_in * K * K)
+        X_windows, (-1, C_in * K * K)
     )  # Memory intensive step: every window in the image is now explicitly copied into its own row.
 
     return X_rows

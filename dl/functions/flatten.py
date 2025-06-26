@@ -17,7 +17,7 @@ def flatten(X, start_axis=1, end_axis=-1):
         + (np.prod(oldshape[start_axis : end_axis + 1]),)
         + oldshape[end_axis + 1 :]
     )
-    Y_data = np.reshape(X.data, newshape=newshape)
+    Y_data = np.reshape(X.data, newshape)
     Y = Variable(Y_data)
 
     # Connect node in computation graph.

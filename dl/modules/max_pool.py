@@ -17,12 +17,12 @@ class MaxPool(Module):
             X.data, window_shape=(1, self.K, self.K), axis=(1, 2, 3)
         )
         X_windows = X_windows[:, :, :: self.stride, :: self.stride]
-        X_rows = np.reshape(X_windows, shape=(-1, 1 * self.K * self.K))
+        X_rows = np.reshape(X_windows, (-1, 1 * self.K * self.K))
         patch_flat_maxes = np.max(X_rows, axis=1)
 
         H_out = (H - self.K) // self.stride + 1
         W_out = (W - self.K) // self.stride + 1
-        Y_data = np.reshape(patch_flat_maxes, shape=(N, C_in, H_out, W_out))
+        Y_data = np.reshape(patch_flat_maxes, (N, C_in, H_out, W_out))
         Y = Variable(Y_data)
 
         input_nodes = []
@@ -52,7 +52,7 @@ def max_pool_backward(params, dY=None):
     H_out = (H - K) // stride + 1
     W_out = (W - K) // stride + 1
 
-    X_rows = np.reshape(X_windows, shape=(-1, 1 * K * K))
+    X_rows = np.reshape(X_windows, (-1, 1 * K * K))
 
     # For each row, recover the input index corresponding to the argmax of that row.
     patch_flat_indices = np.argmax(X_rows, axis=1)
@@ -83,7 +83,7 @@ def max_pool_backward(params, dY=None):
     # 4d index in the input shape, which is exactly what indices contains.
     indices = (indices_N, indices_C_in, indices_H, indices_W)
 
-    dY = np.reshape(dY, shape=(-1))
+    dY = np.reshape(dY, (-1))
 
     G_XY = np.zeros(X.shape)
     np.add.at(G_XY, indices, dY)
