@@ -4,14 +4,27 @@ from dl import Variable
 
 class ToFloat:
 
+    def __init__(self, scale):
+        self.scale = scale
+
     def __call__(self, X):
-        return X.astype(np.float32) / 255.0
+        return X.astype(np.float32) / self.scale
 
 
 class ToVariable:
 
     def __call__(self, X):
         return Variable(X)
+
+
+class Normalize3D:
+
+    def __init__(self, mean, std):
+        self.mean = mean
+        self.std = std
+
+    def __call__(self, X):
+        return (X - self.mean[:, None, None]) / self.std[:, None, None]
 
 
 class Normalize:
@@ -21,7 +34,7 @@ class Normalize:
         self.std = std
 
     def __call__(self, X):
-        return (X - self.mean[:, None, None]) / self.std[:, None, None]
+        return (X - self.mean) / self.std
 
 
 class RandomHorizontalFlip:

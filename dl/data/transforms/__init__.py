@@ -4,6 +4,7 @@ from .transform_definitions import (
     RandomCrop,
     RandomHorizontalFlip,
     Normalize,
+    Normalize3D,
     ComposeTransforms,
 )
 
@@ -13,5 +14,6 @@ __all__ = [
     "RandomCrop",
     "RandomHorizontalFlip",
     "Normalize",
+    "Normalize3D",
     "ComposeTransforms",
 ]
