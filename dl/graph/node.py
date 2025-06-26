@@ -38,12 +38,13 @@ class Node:
 
     # The calling node must have backward_fn that accepts None as upstream. The Variable that this node represents must be a scalar.
     def backward(self):
-        self.ordering = []
-        toposort_nodes(self, self.ordering)
+        if self.propagate_grad:
+            self.ordering = []
+            toposort_nodes(self, self.ordering)
 
-        while self.ordering:
-            self.ordering.pop().propagate()
-        del self.ordering
+            while self.ordering:
+                self.ordering.pop().propagate()
+            del self.ordering
 
     def clear_grad(self):
         self.grad = None

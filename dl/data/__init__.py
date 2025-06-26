@@ -1,8 +1,7 @@
-from .utils import BatchLoader, train_val_split, ComposeTransforms, accuracy
+from .utils import BatchLoader, train_val_split, accuracy
 
 __all__ = [
     "accuracy",
     "BatchLoader",
-    "ComposeTransforms",
     "train_val_split",
 ]
